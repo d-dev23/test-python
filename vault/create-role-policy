@@ -1,0 +1,12 @@
+import requests
+
+role1 = "role-test"
+politica = "pocitic-test"
+url = "http://127.0.0.1:8200"
+token = "myroot"
+policy_rules = """
+path "secret/data/my-secret/*" 
+  capabilities = ["read"]
+}
+"""
+ask = requests.put(url, headers=token, data=policy_rules)
