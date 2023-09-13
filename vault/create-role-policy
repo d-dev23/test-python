@@ -10,3 +10,67 @@ path "secret/data/my-secret/*"
 }
 """
 ask = requests.put(url, headers=token, data=policy_rules)
+
+
+
+
+
+
+
+
+
+
+import requests
+import json
+
+# Замените на URL вашего Vault сервера и токен авторизации
+VAULT_URL = 'http://127.0.0.1:8200'
+VAULT_TOKEN = 'myroot'
+
+# Замените на имя и описание вашей политики
+policy_name = 'my-policy'
+policy_description = 'My custom policy description'
+
+# Замените на правила вашей политики в формате HCL
+policy_rules = """
+path "secret/data/my-secret/*" {
+  capabilities = ["read"]
+}
+"""
+
+# Замените на имя вашей роли и политику, которую вы хотите назначить роли
+role_name = 'my-role'
+assigned_policy = 'my-policy'
+
+# Создание политики
+policy_payload = {
+    "policy": policy_rules,
+    "description": policy_description,
+}
+
+response = requests.put(
+    f"{VAULT_URL}/v1/sys/policies/acl/{policy_name}",
+    headers={"X-Vault-Token": VAULT_TOKEN},
+    data=json.dumps(policy_payload)
+)
+
+if response.status_code == 204:
+    print(f"Политика '{policy_name}' успешно создана в Vault.")
+else:
+    print(f"Не удалось создать политику. Код состояния: {response.status_code}")
+
+# Создание роли и назначение политики
+role_payload = {
+    "policies": assigned_policy,
+}
+
+response = requests.post(
+    f"{VAULT_URL}/v1/auth/approle/role/{role_name}",
+    headers={"X-Vault-Token": VAULT_TOKEN},
+    data=json.dumps(role_payload)
+)
+
+if response.status_code == 204:
+    print(f"Роль '{role_name}' успешно создана и назначена политика '{assigned_policy}'.")
+else:
+    print(f"Не удалось создать роль. Код состояния: {response.status_code}")
