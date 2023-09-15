@@ -1,47 +1,32 @@
 import requests
-
-role1 = "role-test"
-politica = "pocitic-test"
-url = "http://127.0.0.1:8200"
-token = "myroot"
-policy_rules = """
-path "secret/data/my-secret/*" 
-  capabilities = ["read"]
-}
-"""
-ask = requests.put(url, headers=token, data=policy_rules)
-
-
-
-
-
-
-
-
-
-
-import requests
 import json
 
-# Замените на URL вашего Vault сервера и токен авторизации
+# Креды
 VAULT_URL = 'http://127.0.0.1:8200'
 VAULT_TOKEN = 'myroot'
 
-# Замените на имя и описание вашей политики
-policy_name = 'my-policy'
-policy_description = 'My custom policy description'
+# Имя политики и описание 
+policy_name = 'policy'
+policy_description = 'Закинул сюда все че было'
 
-# Замените на правила вашей политики в формате HCL
+# Правила для политики
 policy_rules = """
-path "secret/data/my-secret/*" {
-  capabilities = ["read"]
+path "secret/*" {
+  capabilities = ["create", "read", "update", "patch", "delete", "list"]
+}
+
+path "secret/super-secret" {
+  capabilities = ["deny"]
+}
+
+path "secret/restricted" {
+  capabilities = ["create"]
+  allowed_parameters = {
+    "foo" = []
+    "bar" = ["zip", "zap"]
+  }
 }
 """
-
-# Замените на имя вашей роли и политику, которую вы хотите назначить роли
-role_name = 'my-role'
-assigned_policy = 'my-policy'
-
 # Создание политики
 policy_payload = {
     "policy": policy_rules,
@@ -59,9 +44,28 @@ if response.status_code == 204:
 else:
     print(f"Не удалось создать политику. Код состояния: {response.status_code}")
 
-# Создание роли и назначение политики
+# переменные для  роли и привязка политики
+role_name = 'role-ujw'
+assigned_policy = 'policy'
+
+# синтаксис ключа
+role_pravila = '''
+{
+    "auth":{
+        "client_token":"myroot",
+        "accessor":"0e9e354a-520f-df04-6867-ee81cae3d42d",
+        "policies":[
+            "policy",
+        ],
+        "lease_duration":2764800,
+        "renewable":true
+    },
+    ...
+}
+
+'''
 role_payload = {
-    "policies": assigned_policy,
+    "policies": role_pravila,
 }
 
 response = requests.post(
