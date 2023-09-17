@@ -1,12 +1,13 @@
 import requests
 import json
 
-# авторизация и адрес
+# Креды
 VAULT_URL = 'http://127.0.0.1:8200'
 VAULT_TOKEN = 'myroot'
 
 # Имя политики и описание 
 policy_name = 'policy'
+
 
 # Правила для политики
 policy_rules = """
@@ -47,23 +48,17 @@ role_name = 'role-jwt'
 # синтаксис ключа
 role_pravila = '''
 {
-  "role_type": "jwt",
-  "policies": ["policy"],
-  "token_explicit_max_ttl": 60,
-  "user_claim": "user_email",
-  "bound_claims": {
-    "project_id": "22",
-    "ref": "master",
-    "ref_type": "branch"
-  }
+  "token_policies": "tester",
+  "token_ttl": "1h",
+  "token_max_ttl": "4h"
 }
 '''
 role_payload = {
     "policies": role_pravila,
 }
 
-response2 = requests.post(
-    f"{VAULT_URL}/apisix/admin/consumers/{role_name}",
+response2 = requests.put(
+    f"{VAULT_URL}/v1/auth/approle/role/{role_name}",
     headers={"X-Vault-Token": VAULT_TOKEN},
     data=json.dumps(role_payload)
 )
