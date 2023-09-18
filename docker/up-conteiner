@@ -1,0 +1,9 @@
+# Перед этим выгрузил список контейнеров в файл. 
+
+
+import os
+f = open("/home/paso/containers.txt", "r") #в данном файле содержиться список контейнеров, права даны на чтение.
+containers = f.read().splitlines() # данная переменная нужна для вывода слов из списка по строчно
+
+if ("docker ps --filter name=containers --filter status=running --filter status=restarting | wc -l) == 1"): # условие которое выполняется если  контейнер упал
+    os.system("docker-compose up -d") #команда которую запускает скрипт
