@@ -48,9 +48,10 @@ role_name = 'role-jwt'
 # синтаксис ключа
 role_pravila = '''
 {
-  "token_policies": "tester",
-  "token_ttl": "1h",
-  "token_max_ttl": "4h"
+  "role_type": "jwt",
+  "policies": "policy",
+  "token_explicit_max_ttl": "4h",
+  "user_claim": "user_mail",
 }
 '''
 role_payload = {
