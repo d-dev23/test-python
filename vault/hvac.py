@@ -19,6 +19,7 @@ client.auth.jwt.create_role(
     allowed_redirect_uris=allowed_redirect_uris,
     user_claim='sub',
     bound_audiences=['12345'],
+    token_policies = ['secret-writer']
 )
 
 policy = '''
